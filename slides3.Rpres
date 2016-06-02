@@ -71,8 +71,8 @@ type:section
 Connecting to AmCAT from R
 ====
 
-+ AmCAT API
-  + Create account at `https://amcat.nl`
++ AmCAT API 
+  + (Create account at `https://amcat.nl`)
 
 ```{r, eval=F}
 install_github("amcat/amcat-r")
@@ -83,32 +83,38 @@ library(amcatr)
 conn = amcat.connect("https://amcat.nl")
 ```
 
-Querying AmCAT
+Querying AmCAT: aggregation
 ====
 
 ```{r}
-h = amcat.hits(conn, "referend*", sets=25173)
-head(h)
-a = amcat.aggregate(conn, "referend*", sets=25173, axis1 = "year", axis2="medium") 
+a = amcat.aggregate(conn, "mortgage*", sets=29454, axis1 = "year", axis2="medium") 
 head(a)
+```
+
+Querying AmCAT: raw counts
+====
+
+```{r}
+h = amcat.hits(conn, "mortgage*", sets=29454)
+head(h)
 ```
 
 Merging with metadata
 =====
 
 ```{r}
-meta = amcat.getarticlemeta(conn, 1006, 25173, dateparts = T)
+meta = amcat.getarticlemeta(conn, 41, 29454, dateparts = T)
 h = merge(meta, h)
-perweek = aggregate(h["count"], h[c("week", "medium")], sum)
+peryear = aggregate(h["count"], h[c("year")], sum)
 library(ggplot2)
-ggplot(perweek, aes(x=week, y=count, color=medium)) + geom_line()
+ggplot(peryear, aes(x=year, y=count)) + geom_line()
 ```
 
 
 Uploading text to AmCAT
 ===
 
-```{r, echo=F}
+```{r, echo=F, results='hide'}
 library(twitteR)
 load("~/learningr/api_auth.rda")
 setup_twitter_oauth(tw_consumer_key, tw_consumer_secret, tw_token, tw_token_secret)
@@ -121,15 +127,17 @@ set = amcat.upload.articles(conn, project=1,
   articleset="twitter test", medium="twitter",
   text=tweets$text, headline=tweets$text, 
   date=tweets$created, author=tweets$screenName)
+head(amcat.getarticlemeta(conn, 1, set, columns=c('date', 'headline')))
 ```
 
 Saving selection as article set
 ===
 
 ```{r}
-h = amcat.hits(conn, "visual*", sets=set)
-amcat.add.articles.to.set(conn, project=1, articles=h$id,
+h = amcat.hits(conn, "data*", sets=set)
+set2 = amcat.add.articles.to.set(conn, project=1, articles=h$id,
   articleset.name="Visualization", articleset.provenance="From R")
+head(amcat.getarticlemeta(conn, 1, set2, columns=c('date', 'headline')))
 ```
 
 Interactive session 3a
@@ -219,8 +227,8 @@ Getting tokens from AmCAT
 ===
 
 ```{r, eval=F}
-tokens = amcat.gettokens(conn, project=1, set=set)
-tokens = amcat.gettokens(conn, project=1, set=set, module="corenlp_lemmatize")
+tokens = amcat.gettokens(conn, project=1, articleset=set)
+tokens = amcat.gettokens(conn, project=1, articleset=set, module="corenlp_lemmatize")
 ```
 
 DTM from Tokens

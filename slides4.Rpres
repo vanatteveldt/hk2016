@@ -82,9 +82,8 @@ kable(head(meta))
 Comparing multiple corpora
 ===
 
-```{r}
-library(corpustools)
-d = corpora.compare.list(dtm_o, as.character(meta$year), return.df=T)
+```{r,message=F}
+d = corpora.compare.list(dtm_o, as.character(meta$year), return.df=T, .progress="none")
 d = arrange(d,-chi)
 kable(head(d))
 ```
@@ -123,26 +122,6 @@ Topic Modeling
 Topic Modeling in R
 ====
 
-```{r, echo=F}
-# TODO: move to corpustools
-ldavis_json <- function(m, dtm){
-  
-  # Find required quantities
-  phi <- posterior(m)$terms %>% as.matrix
-  theta <- posterior(m)$topics %>% as.matrix
-  vocab <- colnames(phi)
-  
-  doc.length = row_sums(dtm)
-  term.freq = col_sums(dtm)[match(vocab, colnames(dtm))]
-  
-  createJSON(phi = phi, theta = theta,
-             vocab = vocab,
-             doc.length = doc.length,
-             term.frequency = term.freq)
-  
-}
-```
-
 ```{r}
 library(corpustools)
 set.seed(123)
@@ -153,7 +132,7 @@ kable(terms(m, 10))
 Visualizing LDA
 ====
 
-```{r}
+```{r, eval=F}
 library(LDAvis)
 json = ldavis_json(m, dtm_o)
 serVis(json)
