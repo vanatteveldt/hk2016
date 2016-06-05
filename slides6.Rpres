@@ -154,6 +154,20 @@ Backbone extraction
 g_backbone = getBackboneNetwork(g, alpha=0.01, max.vertices=100)
 ```
 
+Exporting graphs
+===
+
++ Export to e.g. UCInet, gephi
++ More visualization, metrics
+
+```{r, eval=F}
+write.graph(g, filename, format)
+
+library(rgexf)
+gefx = igraph.to.gexf(g)
+print(gefx, file="..")
+```
+
 Semnet for Sentiment Analysis
 ===
 

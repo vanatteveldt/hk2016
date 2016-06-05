@@ -994,6 +994,24 @@ g = windowedCoOccurenceNetwork(location, term, context)
 
 </section>
 <section data-transition="linear" data-transition-speed="default">
+<h3>Exporting graphs</h3>
+<div class="slideContent" >
+<ul>
+<li>Export to e.g. UCInet, gephi</li>
+<li>More visualization, metrics</li>
+</ul>
+
+<pre><code class="r">write.graph(g, filename, format)
+
+library(rgexf)
+gefx = igraph.to.gexf(g)
+print(gefx, file=&quot;..&quot;)
+</code></pre>
+
+</div>
+
+</section>
+<section data-transition="linear" data-transition-speed="default">
 <h3>Semnet for Sentiment Analysis</h3>
 <div class="slideContent" >
 <ul>
